@@ -16,7 +16,7 @@ module.exports = {
   },
 
   create: async (table, id, event) => {
-    await dynamoDb
+    await dynamoDb.doc
       .put({
         TableName: table,
         ConditionExpression: "attribute_not_exists(id)",
@@ -29,7 +29,7 @@ module.exports = {
   },
 
   add: async (table, id, event) => {
-    await dynamoDb
+    await dynamoDb.doc
       .put({
         TableName: table,
         ConditionExpression: "attribute_not_exists(#eventNumber)",

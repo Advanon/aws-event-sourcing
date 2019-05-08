@@ -1,0 +1,27 @@
+{
+  "name": "aws-event-sourcing",
+  "version": "1.0.0",
+  "description": "Event source library built with AWS",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Advanon/aws-event-sourcing.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Advanon/aws-event-sourcing/issues"
+  },
+  "homepage": "https://github.com/Advanon/aws-event-sourcing#readme",
+  "dependencies": {
+    "aws-access-utils": "^1.1.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^5.15.1",
+    "jest": "^24.4.0"
+  }
+}

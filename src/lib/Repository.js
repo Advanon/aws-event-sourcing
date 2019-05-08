@@ -1,10 +1,10 @@
 const { dynamoDb } = require("aws-access-utils");
 
-class Repository {
-  static async query(table, id) {
+module.exports = {
+  query: async (table, id) => {
     const { Items } = await dynamoDb.doc
       .query({
-        TableName: this.table,
+        TableName: table,
         KeyConditionExpression: "id = :id",
         ScanIndexForward: true,
         ExpressionAttributeValues: {
@@ -13,38 +13,34 @@ class Repository {
       })
       .promise();
     return Items;
-  }
+  },
 
-  static async create(table, id, event) {
+  create: async (table, id, event) => {
     await dynamoDb
       .put({
-        TableName: this.table,
+        TableName: table,
         ConditionExpression: "attribute_not_exists(id)",
         Item: {
-          id: this.id,
+          id: id,
           ...event
         }
       })
       .promise();
-    return;
-  }
+  },
 
-  static async add(table, id, event) {
+  add: async (table, id, event) => {
     await dynamoDb
       .put({
-        TableName: this.table,
+        TableName: table,
         ConditionExpression: "attribute_not_exists(#eventNumber)",
         ExpressionAttributeNames: {
           "#eventNumber": "number"
         },
         Item: {
-          id: this.id,
+          id: id,
           ...event
         }
       })
       .promise();
-    return;
   }
-}
-
-module.exports = Repository;
+};

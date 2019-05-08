@@ -32,30 +32,30 @@ describe("Aggregate", () => {
     expect(SUT.commit).toBeInstanceOf(Function);
     expect(SUT.apply).toBeInstanceOf(Function);
   });
+
   describe("events", () => {
     test("calls query on repository", async () => {
-      query.mockReturnValue(Promise.resolve());
+      query.mockReturnValue();
       await SUT.events();
       expect(query).toHaveBeenCalledTimes(1);
       expect(query).toBeCalledWith(table, id);
     });
   });
+
   describe("hydrate", () => {
     test("calls query (via events()) if no fromEvents are passed in, then apply", async () => {
-      query.mockReturnValue(
-        Promise.resolve([
-          {
-            type: "TestEvent",
-            increment: 1,
-            number: 1
-          },
-          {
-            type: "TestEvent",
-            increment: 2,
-            number: 2
-          }
-        ])
-      );
+      query.mockReturnValue([
+        {
+          type: "TestEvent",
+          increment: 1,
+          number: 1
+        },
+        {
+          type: "TestEvent",
+          increment: 2,
+          number: 2
+        }
+      ]);
       await SUT.hydrate();
       expect(query).toHaveBeenCalledTimes(1);
       expect(SUT.count).toBe(3);
@@ -76,9 +76,10 @@ describe("Aggregate", () => {
       expect(SUT.count).toBe(26);
     });
   });
+
   describe("commit", () => {
     test("creates version 1 of event if no event history", async () => {
-      query.mockReturnValue(Promise.resolve([]));
+      query.mockReturnValue([]);
       await SUT.commit({
         type: "TestEvent",
         increment: 51,
@@ -88,20 +89,18 @@ describe("Aggregate", () => {
       expect(SUT.count).toBe(51);
     });
     test("adds event if is the correct next event number", async () => {
-      query.mockReturnValue(
-        Promise.resolve([
-          {
-            type: "TestEvent",
-            increment: 1,
-            number: 1
-          },
-          {
-            type: "TestEvent",
-            increment: 2,
-            number: 2
-          }
-        ])
-      );
+      query.mockReturnValue([
+        {
+          type: "TestEvent",
+          increment: 1,
+          number: 1
+        },
+        {
+          type: "TestEvent",
+          increment: 2,
+          number: 2
+        }
+      ]);
       await SUT.commit({
         type: "TestEvent",
         increment: 51,
@@ -111,20 +110,18 @@ describe("Aggregate", () => {
       expect(SUT.count).toBe(54);
     });
     test("throws IllegalEventNumberError if next number is incorrect", async () => {
-      query.mockReturnValue(
-        Promise.resolve([
-          {
-            type: "TestEvent",
-            increment: 1,
-            number: 1
-          },
-          {
-            type: "TestEvent",
-            increment: 2,
-            number: 2
-          }
-        ])
-      );
+      query.mockReturnValue([
+        {
+          type: "TestEvent",
+          increment: 1,
+          number: 1
+        },
+        {
+          type: "TestEvent",
+          increment: 2,
+          number: 2
+        }
+      ]);
       await expect(
         SUT.commit({
           type: "TestEvent",

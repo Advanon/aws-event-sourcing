@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git+https://github.com/Advanon/aws-event-sourcing.git"
   },
-  "author": "",
+  "author": "Advanon",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Advanon/aws-event-sourcing/issues"

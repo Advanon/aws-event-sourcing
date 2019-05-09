@@ -34,7 +34,7 @@ class Aggregate extends Resource {
     if (this.version === event.number) {
       return add(this.table, this.id, event);
     }
-    throw new IllegalEventNumberError();
+    throw new IllegalEventNumberError(this.version, event.number);
   }
 
   apply(events) {

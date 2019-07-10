@@ -1,8 +1,8 @@
-const NotImplementedError = require("./NotImplementedError");
-const IllegalEventNumberError = require("./IllegalEventNumberError");
-const { v4 } = require("uuid");
-const { query, add, create } = require("./Repository");
-const Resource = require("./Resource");
+const IllegalEventError = require('./IllegalEventError');
+const IllegalEventNumberError = require('./IllegalEventNumberError');
+const { v4 } = require('uuid');
+const { query, add, create } = require('./Repository');
+const Resource = require('./Resource');
 
 class Aggregate extends Resource {
   constructor(options) {
@@ -44,7 +44,7 @@ class Aggregate extends Resource {
         this[methodName](event);
         this.version++;
       } else {
-        throw new IllegalEventArgument(event);
+        throw new IllegalEventError(event);
       }
     });
   }

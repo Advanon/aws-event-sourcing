@@ -1,4 +1,4 @@
-const NotImplementedError = require('./NotImplementedError');
+const { NotImplementedError } = require('./errors');
 
 class Event {
   get number() {

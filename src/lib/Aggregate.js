@@ -1,5 +1,4 @@
-const IllegalEventError = require('./IllegalEventError');
-const IllegalEventNumberError = require('./IllegalEventNumberError');
+const { IllegalEventNumberError, IllegalEventError } = require('./errors');
 const { v4 } = require('uuid');
 const { query, add, create } = require('./repository');
 const Resource = require('./Resource');

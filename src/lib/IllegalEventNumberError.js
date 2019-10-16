@@ -3,7 +3,7 @@ class IllegalEventNumberError extends Error {
     super();
     this.version = version;
     this.number = number;
-    this.name = "IllegalEventNumberError";
+    this.name = 'IllegalEventNumberError';
   }
 }
 

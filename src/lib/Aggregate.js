@@ -22,7 +22,7 @@ class Aggregate extends Resource {
 
   async hydrate(fromEvents) {
     const events = fromEvents || (await this.events());
-    this.apply(events.filter(event => event.number > this.version));
+    this.apply(events.filter((event) => event.number > this.version));
   }
 
   async commit(event) {
@@ -38,7 +38,7 @@ class Aggregate extends Resource {
   }
 
   apply(events) {
-    events.forEach(event => {
+    events.forEach((event) => {
       const methodName = `on${event.type}`;
       if (this[methodName]) {
         this[methodName](event);

@@ -1,4 +1,4 @@
-const NotImplementedError = require("./NotImplementedError");
+const NotImplementedError = require('./NotImplementedError');
 
 class Resource {
   get id() {

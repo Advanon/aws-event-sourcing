@@ -4,6 +4,7 @@
   "description": "Event source library built with AWS",
   "main": "index.js",
   "scripts": {
+    "lint": "eslint .",
     "test": "jest"
   },
   "repository": {

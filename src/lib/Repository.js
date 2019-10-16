@@ -1,13 +1,13 @@
-const { dynamoDb } = require("aws-access-utils");
+const { dynamoDb } = require('aws-access-utils');
 
 const query = async (TableName, id) => {
   const { Items } = await dynamoDb.doc
     .query({
       TableName,
-      KeyConditionExpression: "id = :id",
+      KeyConditionExpression: 'id = :id',
       ScanIndexForward: true,
       ExpressionAttributeValues: {
-        ":id": id
+        ':id': id
       }
     })
     .promise();
@@ -18,7 +18,7 @@ const create = async (TableName, id, event) => {
   await dynamoDb.doc
     .put({
       TableName,
-      ConditionExpression: "attribute_not_exists(id)",
+      ConditionExpression: 'attribute_not_exists(id)',
       Item: {
         id: id,
         ...event
@@ -31,9 +31,9 @@ const add = async (TableName, id, event) => {
   await dynamoDb.doc
     .put({
       TableName,
-      ConditionExpression: "attribute_not_exists(#eventNumber)",
+      ConditionExpression: 'attribute_not_exists(#eventNumber)',
       ExpressionAttributeNames: {
-        "#eventNumber": "number"
+        '#eventNumber': 'number'
       },
       Item: {
         id: id,

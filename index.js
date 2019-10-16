@@ -6,10 +6,10 @@ const NotImplementedError = require('./src/lib/NotImplementedError');
 const Resource = require('./src/lib/Resource');
 
 module.exports = {
-    Aggregate,
-    Event,
-    IllegalEventError,
-    IllegalEventNumberError,
-    NotImplementedError,
-    Resource
-}
+  Aggregate,
+  Event,
+  IllegalEventError,
+  IllegalEventNumberError,
+  NotImplementedError,
+  Resource
+};

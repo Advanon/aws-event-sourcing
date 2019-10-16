@@ -1,7 +1,7 @@
 class IllegalEventError extends Error {
   constructor() {
     super();
-    this.name = "IllegalEventError";
+    this.name = 'IllegalEventError';
   }
 }
 

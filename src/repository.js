@@ -1,7 +1,7 @@
 const { dynamoDb } = require('aws-access-utils');
 
 const query = async (TableName, id) => {
-  const { Items } = await dynamoDb.doc
+  let { Items: items, LastEvaluatedKey: lastEvaluatedKey } = await dynamoDb.doc
     .query({
       TableName,
       KeyConditionExpression: 'id = :id',
@@ -11,7 +11,25 @@ const query = async (TableName, id) => {
       }
     })
     .promise();
-  return Items;
+
+  while (lastEvaluatedKey) {
+    const { Items, LastEvaluatedKey } = await dynamoDb.doc
+      .query({
+        TableName,
+        KeyConditionExpression: 'id = :id',
+        ScanIndexForward: true,
+        ExpressionAttributeValues: {
+          ':id': id
+        },
+        ExclusiveStartKey: lastEvaluatedKey
+      })
+      .promise();
+
+    lastEvaluatedKey = LastEvaluatedKey;
+    items = items.concat(Items);
+  }
+
+  return items;
 };
 
 const create = async (TableName, id, event) => {

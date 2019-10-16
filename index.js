@@ -1,7 +1,7 @@
-const Aggregate = require('./src/lib/Aggregate');
-const Event = require('./src/lib/Event');
-const { IllegalEventError, IllegalEventNumberError, NotImplementedError } = require('./src/lib/errors');
-const Resource = require('./src/lib/Resource');
+const Aggregate = require('./src/Aggregate');
+const Event = require('./src/Event');
+const { IllegalEventError, IllegalEventNumberError, NotImplementedError } = require('./src/errors');
+const Resource = require('./src/Resource');
 
 module.exports = {
   Aggregate,

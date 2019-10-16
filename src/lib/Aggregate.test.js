@@ -1,7 +1,6 @@
 jest.mock("./Repository");
 jest.mock("uuid");
 const { query, add, create } = require("./Repository");
-const { v4 } = require("uuid");
 const IllegalEventNumberError = require("./IllegalEventNumberError");
 const Aggregate = require("./Aggregate");
 const table = "TestTable";

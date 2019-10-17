@@ -1,6 +1,6 @@
 {
   "name": "aws-event-sourcing",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Event source library built with AWS",
   "main": "index.js",
   "scripts": {

@@ -1,11 +1,10 @@
-jest.mock("./Repository");
-jest.mock("uuid");
-const { query, add, create } = require("./Repository");
-const { v4 } = require("uuid");
-const IllegalEventNumberError = require("./IllegalEventNumberError");
-const Aggregate = require("./Aggregate");
-const table = "TestTable";
-const id = "TestID";
+jest.mock('./repository');
+jest.mock('uuid');
+const { query, add, create } = require('./repository');
+const { IllegalEventNumberError } = require('./errors');
+const Aggregate = require('./Aggregate');
+const table = 'TestTable';
+const id = 'TestID';
 
 class TestAggregate extends Aggregate {
   constructor(options) {
@@ -18,7 +17,7 @@ class TestAggregate extends Aggregate {
 }
 let SUT;
 
-describe("Aggregate", () => {
+describe('Aggregate', () => {
   beforeEach(() => {
     SUT = new TestAggregate({
       table,
@@ -26,15 +25,15 @@ describe("Aggregate", () => {
     });
     query.mockReset();
   });
-  test("up", () => {
+  test('up', () => {
     expect(SUT.events).toBeInstanceOf(Function);
     expect(SUT.hydrate).toBeInstanceOf(Function);
     expect(SUT.commit).toBeInstanceOf(Function);
     expect(SUT.apply).toBeInstanceOf(Function);
   });
 
-  describe("events", () => {
-    test("calls query on repository", async () => {
+  describe('events', () => {
+    test('calls query on repository', async () => {
       query.mockReturnValue();
       await SUT.events();
       expect(query).toHaveBeenCalledTimes(1);
@@ -42,16 +41,16 @@ describe("Aggregate", () => {
     });
   });
 
-  describe("hydrate", () => {
-    test("calls query (via events()) if no fromEvents are passed in, then apply", async () => {
+  describe('hydrate', () => {
+    test('calls query (via events()) if no fromEvents are passed in, then apply', async () => {
       query.mockReturnValue([
         {
-          type: "TestEvent",
+          type: 'TestEvent',
           increment: 1,
           number: 1
         },
         {
-          type: "TestEvent",
+          type: 'TestEvent',
           increment: 2,
           number: 2
         }
@@ -60,15 +59,15 @@ describe("Aggregate", () => {
       expect(query).toHaveBeenCalledTimes(1);
       expect(SUT.count).toBe(3);
     });
-    test("uses fromEvents if passed in", async () => {
+    test('uses fromEvents if passed in', async () => {
       await SUT.hydrate([
         {
-          type: "TestEvent",
+          type: 'TestEvent',
           increment: 21,
           number: 1
         },
         {
-          type: "TestEvent",
+          type: 'TestEvent',
           increment: 5,
           number: 2
         }
@@ -77,54 +76,54 @@ describe("Aggregate", () => {
     });
   });
 
-  describe("commit", () => {
-    test("creates version 1 of event if no event history", async () => {
+  describe('commit', () => {
+    test('creates version 1 of event if no event history', async () => {
       query.mockReturnValue([]);
       await SUT.commit({
-        type: "TestEvent",
+        type: 'TestEvent',
         increment: 51,
         number: 1
       });
       expect(create).toHaveBeenCalledTimes(1);
       expect(SUT.count).toBe(51);
     });
-    test("adds event if is the correct next event number", async () => {
+    test('adds event if is the correct next event number', async () => {
       query.mockReturnValue([
         {
-          type: "TestEvent",
+          type: 'TestEvent',
           increment: 1,
           number: 1
         },
         {
-          type: "TestEvent",
+          type: 'TestEvent',
           increment: 2,
           number: 2
         }
       ]);
       await SUT.commit({
-        type: "TestEvent",
+        type: 'TestEvent',
         increment: 51,
         number: 3
       });
       expect(add).toHaveBeenCalledTimes(1);
       expect(SUT.count).toBe(54);
     });
-    test("throws IllegalEventNumberError if next number is incorrect", async () => {
+    test('throws IllegalEventNumberError if next number is incorrect', async () => {
       query.mockReturnValue([
         {
-          type: "TestEvent",
+          type: 'TestEvent',
           increment: 1,
           number: 1
         },
         {
-          type: "TestEvent",
+          type: 'TestEvent',
           increment: 2,
           number: 2
         }
       ]);
       await expect(
         SUT.commit({
-          type: "TestEvent",
+          type: 'TestEvent',
           increment: 51,
           number: 5
         })

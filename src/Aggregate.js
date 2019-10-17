@@ -1,7 +1,6 @@
-const IllegalEventError = require('./IllegalEventError');
-const IllegalEventNumberError = require('./IllegalEventNumberError');
+const { IllegalEventNumberError, IllegalEventError } = require('./errors');
 const { v4 } = require('uuid');
-const { query, add, create } = require('./Repository');
+const { query, add, create } = require('./repository');
 const Resource = require('./Resource');
 
 class Aggregate extends Resource {
@@ -22,7 +21,7 @@ class Aggregate extends Resource {
 
   async hydrate(fromEvents) {
     const events = fromEvents || (await this.events());
-    this.apply(events.filter(event => event.number > this.version));
+    this.apply(events.filter((event) => event.number > this.version));
   }
 
   async commit(event) {
@@ -38,7 +37,7 @@ class Aggregate extends Resource {
   }
 
   apply(events) {
-    events.forEach(event => {
+    events.forEach((event) => {
       const methodName = `on${event.type}`;
       if (this[methodName]) {
         this[methodName](event);

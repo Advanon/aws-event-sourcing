@@ -1,32 +1,42 @@
-const { IllegalEventNumberError, IllegalEventError } = require('./errors');
-const { v4 } = require('uuid');
-const { query, add, create } = require('./repository');
-const Resource = require('./Resource');
+import { IllegalEventNumberError, IllegalEventError } from './errors';
+import { v4 } from 'uuid';
 
-class Aggregate extends Resource {
-  constructor(options) {
+import { query, add, create } from './repository';
+import Resource from './Resource';
+import Event from './Event';
+
+const UNDEFINED_TABLE_NAME = 'undefined';
+
+export default class Aggregate extends Resource {
+  _id: string;
+  version: number;
+  table: string;
+
+  constructor(options?: { id: string, table: string }) {
     super();
     this._id = (options && options.id) || v4();
     this.version = 0;
-    this.table = options && options.table;
+    this.table = (options && options.table) || UNDEFINED_TABLE_NAME;
   }
 
-  get id() {
+  get id(): string {
     return this._id;
   }
 
-  async events() {
+  async events(): Promise<Array<Event>> {
     return query(this.table, this.id);
   }
 
-  async hydrate(fromEvents) {
+  async hydrate(fromEvents?: Array<Event>): Promise<void> {
     const events = fromEvents || (await this.events());
     this.apply(events.filter((event) => event.number > this.version));
   }
 
-  async commit(event) {
+  async commit(event: Event): Promise<void> {
     await this.hydrate();
-    await this.apply([event]);
+
+    this.apply([event]);
+
     if (this.version === 1 && event.number === 1) {
       return create(this.table, this.id, event);
     }
@@ -36,17 +46,15 @@ class Aggregate extends Resource {
     throw new IllegalEventNumberError(this.version, event.number);
   }
 
-  apply(events) {
+  apply(events: Array<Event>): void {
     events.forEach((event) => {
       const methodName = `on${event.type}`;
       if (this[methodName]) {
         this[methodName](event);
         this.version++;
       } else {
-        throw new IllegalEventError(event);
+        throw new IllegalEventError();
       }
     });
   }
 }
-
-module.exports = Aggregate;

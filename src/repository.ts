@@ -1,6 +1,8 @@
-const { dynamoDb } = require('aws-access-utils');
+import { dynamoDb } from '@advanon-ag/aws-access-utils';
 
-const query = async (TableName, id) => {
+import Event from './Event';
+
+export const query = async (TableName: string, id: string): Promise<Array<Event>> => {
   let { Items: items, LastEvaluatedKey: lastEvaluatedKey } = await dynamoDb.doc
     .query({
       TableName,
@@ -26,13 +28,17 @@ const query = async (TableName, id) => {
       .promise();
 
     lastEvaluatedKey = LastEvaluatedKey;
-    items = items.concat(Items);
+    items = (items || []).concat(Items || []);
   }
 
-  return items;
+  return items as Array<Event>;
 };
 
-const create = async (TableName, id, event) => {
+export const create = async (
+  TableName: string,
+  id: string,
+  event: Event
+): Promise<void> => {
   await dynamoDb.doc
     .put({
       TableName,
@@ -45,7 +51,11 @@ const create = async (TableName, id, event) => {
     .promise();
 };
 
-const add = async (TableName, id, event) => {
+export const add = async (
+  TableName: string,
+  id: string,
+  event: Event
+): Promise<void> => {
   await dynamoDb.doc
     .put({
       TableName,
@@ -60,5 +70,3 @@ const add = async (TableName, id, event) => {
     })
     .promise();
 };
-
-module.exports = { query, create, add };

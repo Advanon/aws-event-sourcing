@@ -1,21 +1,33 @@
 jest.mock('./repository');
 jest.mock('uuid');
-const { query, add, create } = require('./repository');
-const { IllegalEventNumberError } = require('./errors');
-const Aggregate = require('./Aggregate');
+
+import { query, add, create } from './repository';
+import { IllegalEventNumberError } from './errors';
+import Aggregate from './Aggregate';
+import Event from './Event';
+
 const table = 'TestTable';
 const id = 'TestID';
 
+type CustomEvent = { increment: number }
+
 class TestAggregate extends Aggregate {
-  constructor(options) {
+  count: number;
+
+  constructor(options?: { id: string, table: string }) {
     super(options);
     this.count = 0;
   }
-  onTestEvent(event) {
+
+  onTestEvent(event: Event & CustomEvent) {
     this.count += event.increment;
   }
 }
+
 let SUT;
+
+// @ts-ignore
+const mockedQuery = query as jest.Mock<query>;
 
 describe('Aggregate', () => {
   beforeEach(() => {
@@ -23,7 +35,10 @@ describe('Aggregate', () => {
       table,
       id
     });
-    query.mockReset();
+
+
+
+    mockedQuery.mockReset();
   });
   test('up', () => {
     expect(SUT.events).toBeInstanceOf(Function);
@@ -34,7 +49,7 @@ describe('Aggregate', () => {
 
   describe('events', () => {
     test('calls query on repository', async () => {
-      query.mockReturnValue();
+      mockedQuery.mockReturnValue([]);
       await SUT.events();
       expect(query).toHaveBeenCalledTimes(1);
       expect(query).toBeCalledWith(table, id);
@@ -43,16 +58,18 @@ describe('Aggregate', () => {
 
   describe('hydrate', () => {
     test('calls query (via events()) if no fromEvents are passed in, then apply', async () => {
-      query.mockReturnValue([
+      mockedQuery.mockReturnValue([
         {
           type: 'TestEvent',
           increment: 1,
-          number: 1
+          number: 1,
+          created: '',
         },
         {
           type: 'TestEvent',
           increment: 2,
-          number: 2
+          number: 2,
+          created: '',
         }
       ]);
       await SUT.hydrate();
@@ -78,26 +95,29 @@ describe('Aggregate', () => {
 
   describe('commit', () => {
     test('creates version 1 of event if no event history', async () => {
-      query.mockReturnValue([]);
+      mockedQuery.mockReturnValue([]);
       await SUT.commit({
         type: 'TestEvent',
         increment: 51,
-        number: 1
+        number: 1,
+        created: '',
       });
       expect(create).toHaveBeenCalledTimes(1);
       expect(SUT.count).toBe(51);
     });
     test('adds event if is the correct next event number', async () => {
-      query.mockReturnValue([
+      mockedQuery.mockReturnValue([
         {
           type: 'TestEvent',
           increment: 1,
-          number: 1
+          number: 1,
+          created: '',
         },
         {
           type: 'TestEvent',
           increment: 2,
-          number: 2
+          number: 2,
+          created: '',
         }
       ]);
       await SUT.commit({
@@ -109,16 +129,18 @@ describe('Aggregate', () => {
       expect(SUT.count).toBe(54);
     });
     test('throws IllegalEventNumberError if next number is incorrect', async () => {
-      query.mockReturnValue([
+      mockedQuery.mockReturnValue([
         {
           type: 'TestEvent',
           increment: 1,
-          number: 1
+          number: 1,
+          created: '',
         },
         {
           type: 'TestEvent',
           increment: 2,
-          number: 2
+          number: 2,
+          created: '',
         }
       ]);
       await expect(
@@ -127,7 +149,7 @@ describe('Aggregate', () => {
           increment: 51,
           number: 5
         })
-      ).rejects.toEqual(new IllegalEventNumberError());
+      ).rejects.toEqual(new IllegalEventNumberError('', ''));
     });
   });
 });

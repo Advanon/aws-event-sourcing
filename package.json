@@ -1,6 +1,6 @@
 {
   "name": "@advanon-ag/aws-event-sourcing",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Event source library built with AWS",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,7 +20,7 @@
   },
   "homepage": "https://github.com/Advanon/aws-event-sourcing#readme",
   "dependencies": {
-    "@advanon-ag/aws-access-utils": "^2.2.5",
+    "@advanon-ag/aws-access-utils": "^2.2.6",
     "uuid": "^3.3.3"
   },
   "devDependencies": {

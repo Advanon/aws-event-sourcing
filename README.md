@@ -106,7 +106,7 @@ module.exports.createLoan = async (event, context)=>{
     const loan = new Loan();
     await loan.hydrate();
     await loan.commit({
-        type: 'LoanCrated',
+        type: 'LoanCreated',
         number: loan.version + 1,
         requestedAmount: event.amount,
         interest: event.interest,
